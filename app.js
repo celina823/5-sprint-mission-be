@@ -12,6 +12,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors()); //모든 출처에 대해 허용
 
 //라우터 사용
 app.use("/article", articleRoutes);
