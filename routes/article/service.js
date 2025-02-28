@@ -55,14 +55,14 @@ const getArticle = async (req, res) => {
     // 총 데이터 개수 (전체 게시글 개수)
     const totalCount = filteredArticles.length;
 
-    res.send({
+    res.json({
       articles: paginatedArticles,
       topArticles,
       totalCount
     });
   } catch (err) {
     console.log("에러 확인용", err);
-    res.status(500).send({
+    res.status(500).json({
       message: "게시글 조회 중 오류가 발생했습니다.",
     });
   }
