@@ -26,7 +26,7 @@ const createArticle = async (req, res) => {
 // 📝게시글 목록 조회 함수
 const getArticle = async (req, res) => {
   try {
-    const { page = 1 } = req.query; // 기본값: page=1, limit=10
+    const { page = 1, limit = 4 } = req.query; // 기본값: page=1, limit=4
 
     // 페이지네이션 계산
     const skip = (page - 1) * limit;
