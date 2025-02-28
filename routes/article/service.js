@@ -26,47 +26,29 @@ const createArticle = async (req, res) => {
 // 📝게시글 목록 조회 함수
 const getArticle = async (req, res) => {
   try {
-<<<<<<< HEAD
     const { page = 1, limit = 4 } = req.query; // 기본값: page=1, limit=4
-=======
-    const { searchQuery = "", sortType = "latest", limit = 10, skip = 0 } = req.query; // 쿼리 파라미터로 검색어, 정렬, limit, skip 등을 받음
->>>>>>> 885f22247b232397ff7d3399e59cdd1d52d6a499
 
-    // 데이터 가져오기 (데이터베이스에서 가져오는 코드 예시)
-    const articles = await getArticlesFromDB();
+    // 페이지네이션 계산
+    const skip = (page - 1) * limit;
+    const take = limit;
 
-    // 검색 필터링
-    const filteredArticles = articles.filter(article =>
-      article.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    // 정렬
-    const sortedArticles = filteredArticles.sort((a, b) => {
-      if (sortType === "latest") {
-        return new Date(b.createdAt) - new Date(a.createdAt); // 최신순 정렬
-      } else if (sortType === "heart") {
-        return b.Heart - a.Heart; // 좋아요 순 정렬
-      }
-      return 0;
+    const articles = await prisma.article.findMany({
+      skip,
+      take,
+      include: { comments: true }, // 댓글도 포함해서 게시글 조회
     });
+    const totalArticles = await prisma.article.count(); // 총 게시글 수 조회
+    const totalPages = Math.ceil(totalArticles / limit); // 총 페이지 수 계산
 
-    // 페이징 처리
-    const paginatedArticles = sortedArticles.slice(skip, skip + Number(limit));
-
-    // 상위 3개의 인기 게시글 (예: 좋아요 순)
-    const topArticles = articles.sort((a, b) => b.Heart - a.Heart).slice(0, 3);
-
-    // 총 데이터 개수 (전체 게시글 개수)
-    const totalCount = filteredArticles.length;
-
-    res.json({
-      articles: paginatedArticles,
-      topArticles,
-      totalCount
+    res.send({
+      articles,
+      page,
+      totalPages,
+      totalArticles,
     });
   } catch (err) {
     console.log("에러 확인용", err);
-    res.status(500).json({
+    res.status(500).send({
       message: "게시글 조회 중 오류가 발생했습니다.",
     });
   }
