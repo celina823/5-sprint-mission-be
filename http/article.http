@@ -5,14 +5,14 @@ GET http://localhost:5004/article
 GET http://localhost:3333/article/1fa9eca6-9699-4778-91a6-c34f7a7859f5
 ###
 
-POST http://localhost:3333/article
+POST http://localhost:5004/article
 Content-Type: application/json
 
  {
-  "nickname": "무념무상판다",
-  "title": "뭐 좀 사실 분",
-  "content": "뭐 팔지 미정",
-  "image": "https://cdn.pixabay.com/photo/2015/10/31/12/41/sale-1015710_1280.jpg"
+  "nickname": "테스트판다",
+  "title": "이 글을 테스트하겠습니다",
+  "content": "테스트12345",
+  "image": ""
  }
 
 ###
