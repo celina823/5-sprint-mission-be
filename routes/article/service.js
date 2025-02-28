@@ -30,21 +30,25 @@ const getArticle = async (req, res) => {
 
     // 페이지네이션 계산
     const skip = (page - 1) * limit;
-    const take = limit;
 
     const articles = await prisma.article.findMany({
       skip,
-      take,
+      take: limit,
+      orderBy: { createdAt: "desc" }, // 최신순 정렬
       include: { comments: true }, // 댓글도 포함해서 게시글 조회
     });
     const totalArticles = await prisma.article.count(); // 총 게시글 수 조회
     const totalPages = Math.ceil(totalArticles / limit); // 총 페이지 수 계산
+
+    // 마지막 페이지인지 확인
+    const isLastPage = page >= totalPages;
 
     res.send({
       articles,
       page,
       totalPages,
       totalArticles,
+      isLastPage,
     });
   } catch (err) {
     console.log("에러 확인용", err);
