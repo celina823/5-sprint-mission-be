@@ -26,18 +26,32 @@ const createArticle = async (req, res) => {
 // 📝게시글 목록 조회 함수
 const getArticle = async (req, res) => {
   try {
-    const { page = 1, limit = 4 } = req.query; // 기본값: page=1, limit=4
+    const { page = 1, limit = 4, searchQuery = "" } = req.query; // 기본값: page=1, limit=4
 
     // 페이지네이션 계산
     const skip = (page - 1) * limit;
     const take = limit;
 
+    // 검색어가 있을 경우, 해당 검색어로 제목을 필터링
     const articles = await prisma.article.findMany({
       skip,
       take,
+      where: {
+        title: {
+          contains: searchQuery, // 제목에 검색어가 포함된 게시글만 조회
+          mode: 'insensitive',   // 대소문자 구분 없이 검색
+        },
+      },
       include: { comments: true }, // 댓글도 포함해서 게시글 조회
     });
-    const totalArticles = await prisma.article.count(); // 총 게시글 수 조회
+    const totalArticles = await prisma.article.count({
+      where: {
+        title: {
+          contains: searchQuery, // 제목에 검색어가 포함된 게시글만 조회
+          mode: 'insensitive',
+        },
+      },
+    }); // 총 게시글 수 조회
     const totalPages = Math.ceil(totalArticles / limit); // 총 페이지 수 계산
 
     res.send({
