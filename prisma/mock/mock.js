@@ -13,14 +13,14 @@ export const ARTICLES = [
     comments: [
       {
         id: "f21a3296-f295-49fa-b469-8d63b42692d9",
-        userId: "Anonymous",
+        userId: "학생판다",
         content: "상태 너무 좋네요! 가격이 어느 정도 될까요?",
         createdAt: "2025-01-01T00:00:00Z",
         updatedAt: "2025-01-01T00:00:00Z",
       },
       {
         id: "6d4d762f-3e2f-4972-99b6-b89d25314fa2",
-        userId: "Anonymous",
+        userId: "직거래살인마",
         content: "저도 관심 있습니다. 혹시 직거래 가능할까요?",
         createdAt: "2025-01-01T00:00:00Z",
         updatedAt: "2025-01-01T00:00:00Z",
@@ -41,14 +41,14 @@ export const ARTICLES = [
     comments: [
       {
         id: "5f0ad1c4-b4bc-4e55-a24c-b3e345f4b8fc",
-        userId: "Anonymous",
+        userId: "직거래는처음판다",
         content: "얼마에 판매하시는 건가요? 상태가 궁금해요.",
         createdAt: "2025-01-01T00:00:00Z",
         updatedAt: "2025-01-01T00:00:00Z",
       },
       {
         id: "9b31df7d-722d-45b7-b73a-e78f1f07db1d",
-        userId: "Anonymous",
+        userId: "직거래살인마",
         content: "직거래로 만나볼 수 있을까요?",
         createdAt: "2025-01-01T00:00:00Z",
         updatedAt: "2025-01-01T00:00:00Z",
@@ -69,14 +69,14 @@ export const ARTICLES = [
     comments: [
       {
         id: "417e2f9b-e050-4700-957a-d9fce4bcb31b",
-        userId: "Anonymous",
+        userId: "학생판다",
         content: "상태가 너무 좋네요! 가격을 알 수 있을까요?",
         createdAt: "2025-01-01T00:00:00Z",
         updatedAt: "2025-01-01T00:00:00Z",
       },
       {
         id: "34c8d2f9-3ed7-4331-bfd7-e84c8e2e9d52",
-        userId: "Anonymous",
+        userId: "직거래살인마",
         content: "혹시 직거래도 가능할까요? 관심 있습니다.",
         createdAt: "2025-01-01T00:00:00Z",
         updatedAt: "2025-01-01T00:00:00Z",
