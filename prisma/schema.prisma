@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int      @id @default(autoincrement())
+  email             String   @unique
+  nickname          String
+  image             String
+  encryptedPassword String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  articles Article[] // User:Article 1:N
+  products Product[]
+  comments Comment[]
+  Favorite Favorite[]
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  image     String
+  // likeCount controller파일에 추가 prisma.favorite.count()
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  writerId Int // ✅ Article에 User ID 저장
+  writer   User       @relation(fields: [writerId], references: [id])
+  Favorite Favorite[]
+}
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String
+  price       Int
+  isFavorite  Boolean
+
+  tags   Tag[] // Product:Tag 1:N
+  images Image[] // Product:Image 1:N
+
+  ownerId   Int
+  // favoriteCount controller파일에 추가 prisma.favorite.count()
+  createdAt DateTime @default(now())
+
+  owner    User       @relation(fields: [ownerId], references: [id])
+  comments Comment[] // Product:Comment 1:N
+  Favorite Favorite[] // Product:Favorite 1:N
+}
+
+model Tag {
+  id        Int     @id @default(autoincrement())
+  name      String
+  productId Int // ✅ Foreign Key
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Image {
+  id        Int     @id @default(autoincrement())
+  url       String
+  productId Int // ✅ Foreign Key
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    Int
+  productId Int?
+  articleId Int?
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  product Product? @relation(fields: [productId], references: [id])
+  article Article? @relation(fields: [articleId], references: [id])
+
+  @@unique([userId, productId, articleId])
+}
