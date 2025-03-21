@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
 
     // 사용자 생성
     const user = await prisma.users.create({
-      data: { email, nickname, encryptedPassword: hashedPassword },
+      data: { email, nickname, encryptedPassword: hashedPassword, image: null  },
     });
     // 🔹 AccessToken & RefreshToken 생성
     const accessToken = generateToken(user.id, "access");
