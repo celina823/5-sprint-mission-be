@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../../../prisma/client";
 import jwt from "jsonwebtoken";
 import { generateToken } from "../../utils/token";
+import { ExceptionMessage } from "../../constant/ExceptionMessage";
 
 // 회원가입 서비스
 const registerUser = async (req, res) => {
@@ -11,9 +12,11 @@ const registerUser = async (req, res) => {
     // 🔹 비밀번호 확인 일치 여부 검사
     if (password !== passwordConfirmation) {
       return res.status(400).json({
-        message: "비밀번호가 일치하지 않습니다.",
+        message: ExceptionMessage.PASSWORD_CONFIRMATION_NOT_MATCH,
         details: {
-          passwordConfirmation: { message: "비밀번호가 일치하지 않습니다." },
+          passwordConfirmation: {
+            message: ExceptionMessage.PASSWORD_CONFIRMATION_NOT_MATCH,
+          },
         },
       });
     }
@@ -22,9 +25,9 @@ const registerUser = async (req, res) => {
     const existingUser = await prisma.users.findUnique({ where: { email } });
     if (existingUser) {
       return res.status(400).json({
-        message: "이미 사용중인 이메일입니다.",
+        message: ExceptionMessage.ALREADY_REGISTERED_EMAIL,
         details: {
-          email: { message: "이미 사용중인 이메일입니다." },
+          email: { message: ExceptionMessage.ALREADY_REGISTERED_EMAIL },
         },
       });
     }
@@ -34,7 +37,7 @@ const registerUser = async (req, res) => {
 
     // 사용자 생성
     const user = await prisma.users.create({
-      data: { email, nickname, encryptedPassword: hashedPassword, image: null  },
+      data: { email, nickname, encryptedPassword: hashedPassword, image: null },
     });
     // 🔹 AccessToken & RefreshToken 생성
     const accessToken = generateToken(user.id, "access");
@@ -68,9 +71,9 @@ const loginUser = async (req, res) => {
     const user = await prisma.users.findUnique({ where: { email } });
     if (!user) {
       return res.status(400).json({
-        message: "잘못된 이메일 또는 비밀번호입니다.",
+        message: ExceptionMessage.CURRENT_PASSWORD_NOT_MATCH,
         details: {
-          email: { message: "잘못된 이메일 또는 비밀번호입니다." },
+          email: { message: ExceptionMessage.CURRENT_PASSWORD_NOT_MATCH },
         },
       });
     }
@@ -82,9 +85,9 @@ const loginUser = async (req, res) => {
     );
     if (!isPasswordValid) {
       return res.status(400).json({
-        message: "잘못된 이메일 또는 비밀번호입니다.",
+        message: ExceptionMessage.CURRENT_PASSWORD_NOT_MATCH,
         details: {
-          password: { message: "잘못된 이메일 또는 비밀번호입니다." },
+          password: { message: ExceptionMessage.CURRENT_PASSWORD_NOT_MATCH },
         },
       });
     }
@@ -118,7 +121,7 @@ const refreshAccessToken = async (req, res) => {
 
     // 🔹 토큰이 없는 경우
     if (!refreshToken) {
-      return res.status(400).json({ message: "토큰이 제공되지 않았습니다." });
+      return res.status(400).json({ message: ExceptionMessage.INVALID_TOKEN });
     }
 
     // 🔹 Refresh Token 검증
@@ -126,13 +129,17 @@ const refreshAccessToken = async (req, res) => {
     try {
       decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     } catch (error) {
-      return res.status(400).json({ message: "유효하지 않은 토큰입니다." });
+      return res
+        .status(400)
+        .json({ message: ExceptionMessage.INVALID_REFRESH_TOKEN });
     }
 
     // 🔹 유저가 존재하는지 확인
     const user = await prisma.users.findUnique({ where: { id: decoded.id } });
     if (!user) {
-      return res.status(400).json({ message: "유효하지 않은 토큰입니다." });
+      return res
+        .status(400)
+        .json({ message: ExceptionMessage.INVALID_REFRESH_TOKEN });
     }
 
     // 🔹 새로운 Access Token 생성
