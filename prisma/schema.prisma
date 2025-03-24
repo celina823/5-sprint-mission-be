@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model User {
   id                Int      @id @default(autoincrement())
   email             String   @unique
   nickname          String
@@ -22,13 +22,13 @@ model Users {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  articles Articles[] // User:Article 1:N
-  products Products[]
-  comments Comments[]
-  Favorite Favorites[]
+  articles Article[] // User:Article 1:N
+  products Product[]
+  comments Comment[]
+  Favorite Favorite[]
 }
 
-model Articles {
+model Article {
   id        Int      @id @default(autoincrement())
   title     String
   content   String
@@ -38,66 +38,66 @@ model Articles {
   updatedAt DateTime @updatedAt
 
   writerId Int // ✅ Article에 User ID 저장
-  writer   Users       @relation(fields: [writerId], references: [id])
-  Favorite Favorites[]
+  writer   User       @relation(fields: [writerId], references: [id])
+  Favorite Favorite[]
 }
 
-model Products {
+model Product {
   id          Int     @id @default(autoincrement())
   name        String
   description String
   price       Int
   isFavorite  Boolean
 
-  tags   Tags[] // Product:Tag 1:N
-  images Images[] // Product:Image 1:N
+  tags   Tag[] // Product:Tag 1:N
+  images Image[] // Product:Image 1:N
 
   ownerId   Int
   // favoriteCount controller파일에 추가 prisma.favorite.count()
   createdAt DateTime @default(now())
 
-  owner    Users       @relation(fields: [ownerId], references: [id])
-  comments Comments[] // Product:Comment 1:N
-  Favorite Favorites[] // Product:Favorite 1:N
+  owner    User       @relation(fields: [ownerId], references: [id])
+  comments Comment[] // Product:Comment 1:N
+  Favorite Favorite[] // Product:Favorite 1:N
 }
 
-model Tags {
-  id        Int      @id @default(autoincrement())
+model Tag {
+  id        Int     @id @default(autoincrement())
   name      String
   productId Int // ✅ Foreign Key
-  product   Products @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
 
-model Images {
-  id        Int      @id @default(autoincrement())
+model Image {
+  id        Int     @id @default(autoincrement())
   url       String
   productId Int // ✅ Foreign Key
-  product   Products @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
 
-model Comments {
+model Comment {
   id        Int      @id @default(autoincrement())
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   userId Int
-  user   Users @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
 
   productId Int
-  product   Products @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
 
-model Favorites {
+model Favorite {
   id        String   @id @default(uuid())
   userId    Int
   productId Int?
   articleId Int?
   createdAt DateTime @default(now())
 
-  user    Users     @relation(fields: [userId], references: [id])
-  product Products? @relation(fields: [productId], references: [id])
-  article Articles? @relation(fields: [articleId], references: [id])
+  user    User     @relation(fields: [userId], references: [id])
+  product Product? @relation(fields: [productId], references: [id])
+  article Article? @relation(fields: [articleId], references: [id])
 
   @@unique([userId, productId, articleId])
 }
