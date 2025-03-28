@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
     }
 
     // 🔹 이미 존재하는 이메일인지 확인
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.users.findUnique({ where: { email } });
     if (existingUser) {
       return res.status(400).json({
         message: ExceptionMessage.ALREADY_REGISTERED_EMAIL,
@@ -36,7 +36,7 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 사용자 생성
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: { email, nickname, encryptedPassword: hashedPassword, image: null },
     });
     // 🔹 AccessToken & RefreshToken 생성
@@ -68,7 +68,7 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     // 🔹 이메일 존재 여부 확인
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.users.findUnique({ where: { email } });
     if (!user) {
       return res.status(400).json({
         message: ExceptionMessage.CURRENT_PASSWORD_NOT_MATCH,
@@ -135,7 +135,7 @@ const refreshAccessToken = async (req, res) => {
     }
 
     // 🔹 유저가 존재하는지 확인
-    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    const user = await prisma.users.findUnique({ where: { id: decoded.id } });
     if (!user) {
       return res
         .status(400)
